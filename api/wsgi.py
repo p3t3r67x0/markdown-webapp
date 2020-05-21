@@ -4,7 +4,7 @@ import pathlib
 import eventlet
 import subprocess
 
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, send_from_directory, jsonify
 from flask_socketio import SocketIO, emit
 from eventlet.green.subprocess import Popen
 
@@ -13,12 +13,11 @@ eventlet.monkey_patch()
 app = Flask(__name__)
 app.config.from_json('config.json')
 socketio = SocketIO(app, cors_allowed_origins="*")
-thread = None
 
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return jsonify({'message': 'Thanks for visiting the api.reedo.me'}), 404
 
 
 @app.route('/retrieve', methods=['POST'])
