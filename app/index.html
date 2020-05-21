@@ -64,7 +64,7 @@
         </div>
       </div>
       <div id="output" class="container text-white">
-        <pre>waiting for connection</pre>
+        <pre id="initial">waiting for connection</pre>
       </div>
     </div>
   </div>
@@ -80,7 +80,10 @@
   socket.emit('loaded');
 
   socket.on('my_response', function(data) {
-    let outputDiv = document.getElementById('output');
+    let initialPre = document.querySelector('#initial');
+    initialPre.parentNode.removeChild(initialPre);
+
+    let outputDiv = document.querySelector('#output');
     let contentDiv = document.createElement('div');
     contentDiv.innerHTML = '<pre class="break-all">' + data.data + '</pre>';
 
@@ -90,8 +93,8 @@
   });
 
   socket.on('done', function() {
-    const format = document.getElementById('format');
-    const input = document.getElementById('input');
+    const format = document.querySelector('#format');
+    const input = document.querySelector('#input');
 
     fetch(url + '/retrieve', {
         method: 'POST',
@@ -130,7 +133,6 @@
       input: null,
       format: 'gfm',
       startConverter() {
-        document.getElementById('output').innerHTML = '';
         socket.emit('instance', this.format, this.input);
       }
     }
