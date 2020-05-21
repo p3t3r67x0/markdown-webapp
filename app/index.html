@@ -13,18 +13,36 @@
       background: -webkit-linear-gradient(#11FFBD, #AAFFA9);
       background: linear-gradient(#11FFBD, #AAFFA9);
     }
+
+    .bg-custom-500 {
+      background-color: #fc6411;
+    }
   </style>
 </head>
 
-<body class="bg-gray-700">
-  <div x-data="bindForm()" class="h-screen px-12 py-8">
+<body class="bg-gray-700 relative">
+  <div class="absolute w-full">
+    <h1 class="absolute w-full text-6xl font-bold text-white px-6">reedo.me</h1>
+    <svg class="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 350 1440 657">
+      <defs>
+        <path d="M0 892.505c308.829 32.498 548.829 7.536 720-74.885 171.171-82.422 411.171-104.978 720-67.668V0H0v892.505z" id="a" />
+      </defs>
+      <g>
+        <path d="M-55.431 836.955c336.93 43.08 603.018 15.377 798.265-83.11 195.246-98.486 461.131-123.26 797.655-74.317l37.318-537.237L-6.05 126.037l-49.382 710.92z" fill="#E8F4FD" />
+        <use fill="#018EF5" xlink:href="#a" transform="translate(0 -94)" />
+      </g>
+    </svg>
+  </div>
+
+  <div x-data="bindForm()" class="relative h-screen z-50 px-4">
     <div class="flex flex-col items-center justify-center min-h-full">
-      <div class="max-w-xl w-full mb-4">
-        <h1 class="text-5xl text-white mb-8">Markdown Converter</h1>
+      <div class="max-w-5xl w-full p-4 bg-gray-300 rounded-lg">
+        <h1 class="inline-block text-6xl bg-custom-500 font-bold text-white px-3 mb-4">README.md to PDF</h1>
+        <p class="text-xl text-gray-800 mb-8">Your markdown Converter let's you convert any README.md to PDF with just a button click, try it!</p>
         <div class="mb-4">
-          <label for="format" class="block text-white mb-2">Source Format</label>
+          <label for="format" class="block text-lg text-gray-800 font-bold mb-2">Choose format</label>
           <div class="relative">
-            <select v-model="settings.amenity" class="appearance-none cursor-pointer focus:outline-none block w-full px-2 py-2 rounded shadow text-lg">
+            <select v-model="settings.amenity" class="appearance-none cursor-pointer focus:outline-none block w-full px-2 py-2 rounded border border-gray-500 text-lg">
               <option value="gfm" selected>Github Markdown</option>
               <option value="md">Markdown</option>
               <option value="rst">reStructured Text</option>
@@ -36,11 +54,11 @@
             </div>
           </div>
         </div>
-        <div class="mb-4">
-          <label for="format" class="block text-white mb-2">Source Url</label>
-          <input type="text" x-model="input" placeholder="https://github.com/user/repo" class="w-full px-2 py-2 rounded shadow text-lg" />
+        <div class="mb-6">
+          <label for="format" class="block text-lg text-gray-800 font-bold mb-2">Source address</label>
+          <input type="text" x-model="input" placeholder="https://github.com/user/repo" class="w-full px-2 py-2 rounded border border-gray-500 text-lg" />
         </div>
-        <div class="mb-4 text-right">
+        <div class="text-right">
           <button type="button" @click="startConverter()" class="text-gray-900 bg-custom-400 rounded shadow px-3 py-2">Convert now</button>
         </div>
       </div>
