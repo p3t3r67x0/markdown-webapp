@@ -15,7 +15,7 @@
     }
 
     .bg-custom-500 {
-      background-color: #fc6411;
+      background-color: #f56801;
     }
   </style>
 </head>
@@ -79,7 +79,7 @@
   socket.on('my_response', function(data) {
     let outputDiv = document.getElementById('output');
     let contentDiv = document.createElement('div');
-    contentDiv.innerHTML = '<pre>' + data.data + '</pre>';
+    contentDiv.innerHTML = '<pre class="break-all">' + data.data + '</pre>';
 
     while (contentDiv.firstChild) {
       outputDiv.appendChild(contentDiv.firstChild);
