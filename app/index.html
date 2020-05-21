@@ -81,7 +81,10 @@
 
   socket.on('my_response', function(data) {
     let initialPre = document.querySelector('#initial');
-    initialPre.parentNode.removeChild(initialPre);
+
+    if (initialPre) {
+      initialPre.parentNode.removeChild(initialPre);
+    }
 
     let outputDiv = document.querySelector('#output');
     let contentDiv = document.createElement('div');
