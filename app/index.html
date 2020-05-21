@@ -63,8 +63,15 @@
           <button type="button" @click="startConverter()" class="text-white bg-custom-400 focus:outline-none rounded px-3 py-2">Convert now</button>
         </div>
       </div>
-      <div id="output" class="max-w-5xl container text-white overflow-hidden">
-        <code id="initial">waiting for connection</code>
+      <div class="max-w-5xl container bg-gray-800 rounded-lg text-white overflow-hidden p-3 mb-8">
+        <div class="flex mb-4">
+          <span class="h-4 w-4 bg-red-500 rounded-full"></span>
+          <span class="ml-2 h-4 w-4 bg-orange-300 rounded-full"></span>
+          <span class="ml-2 h-4 w-4 bg-green-500 rounded-full"></span>
+        </div>
+        <div id="output">
+          <code id="initial">waiting for connection</code>
+        </div>
       </div>
     </div>
   </div>
