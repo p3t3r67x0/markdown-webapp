@@ -50,7 +50,11 @@
 </body>
 
 <script>
-  const socket = io.connect('http://localhost:5000');
+  const scheme = window.location.protocol;
+  const host = window.location.host;
+  const url = scheme + "//api." + host;
+
+  const socket = io.connect(url);
 
   socket.emit('loaded');
 
@@ -67,9 +71,6 @@
   socket.on('done', function() {
     const format = document.getElementById('format');
     const input = document.getElementById('input');
-    const scheme = window.location.protocol;
-    const host = window.location.host;
-    const url = scheme + "//api." + host;
 
     fetch(url + '/retrieve', {
         method: 'POST',
