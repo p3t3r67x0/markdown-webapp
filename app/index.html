@@ -10,9 +10,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
   <style media="screen">
     .bg-custom-400 {
-      background: #AAFFA9;
-      background: -webkit-linear-gradient(#11FFBD, #AAFFA9);
-      background: linear-gradient(#11FFBD, #AAFFA9);
+      background: #0064af;
+      background: -webkit-linear-gradient(#018EF5, #0064af);
+      background: linear-gradient(#018EF5, #0064af);
     }
 
     .bg-custom-500 {
@@ -24,7 +24,7 @@
 <body class="bg-gray-700 relative">
   <div class="absolute w-full">
     <h1 class="absolute w-full text-2xl lg:text-6xl font-bold text-white px-4 mt-1 lg:px-6">reedo.me</h1>
-    <svg class="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 350 1440 657">
+    <svg class="w-full" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 350 1440 657">
       <defs>
         <path d="M0 892.505c308.829 32.498 548.829 7.536 720-74.885 171.171-82.422 411.171-104.978 720-67.668V0H0v892.505z" id="a" />
       </defs>
@@ -35,9 +35,9 @@
     </svg>
   </div>
 
-  <div x-data="bindForm()" class="relative h-screen z-50 px-4">
+  <div x-data="bindForm()" class="relative h-screen z-50 px-3 pt-5">
     <div class="flex flex-col items-center justify-center min-h-full">
-      <div class="max-w-5xl w-full p-4 bg-gray-300 rounded-lg">
+      <div class="max-w-5xl w-full p-3 bg-gray-300 rounded-lg mb-4">
         <h1 class="inline-block text-4xl lg:text-6xl bg-custom-500 font-bold text-white px-3 mb-4">README.md to PDF</h1>
         <p class="text-xl text-gray-800 mb-8">Your markdown Converter let's you convert any README.md to PDF with just a button click, try it!</p>
         <div class="mb-4">
@@ -60,11 +60,13 @@
           <input type="text" x-model="input" placeholder="https://github.com/user/repo" class="w-full px-2 py-2 rounded border border-gray-500 text-lg" />
         </div>
         <div class="text-right">
-          <button type="button" @click="startConverter()" class="text-gray-900 bg-custom-400 rounded shadow px-3 py-2">Convert now</button>
+          <button type="button" @click="startConverter()" class="text-white bg-custom-400 focus:outline-none rounded px-3 py-2">Convert now</button>
         </div>
       </div>
+      <div id="output" class="container text-white">
+        <pre>waiting for connection</pre>
+      </div>
     </div>
-    <div id="output" class="container text-white"></div>
   </div>
 </body>
 
