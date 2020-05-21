@@ -88,7 +88,7 @@
 
     let outputDiv = document.querySelector('#output');
     let contentDiv = document.createElement('div');
-    contentDiv.innerHTML = '<code class="break-all">' + data.data + '</code>';
+    contentDiv.innerHTML = '<code class="break-all">' + data.data + '</code><br>';
 
     while (contentDiv.firstChild) {
       outputDiv.appendChild(contentDiv.firstChild);
