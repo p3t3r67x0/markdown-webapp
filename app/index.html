@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Markdown Converter v0.0.12</title>
+  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+  <style media="screen">
+    .bg-custom-400 {
+      background: #AAFFA9;
+      background: -webkit-linear-gradient(#11FFBD, #AAFFA9);
+      background: linear-gradient(#11FFBD, #AAFFA9);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-700">
+  <div x-data="bindForm()" class="h-screen px-12 py-8">
+    <div class="flex flex-col items-center justify-center min-h-full">
+      <div class="max-w-xl w-full mb-4">
+        <h1 class="text-5xl text-white mb-8">Markdown Converter</h1>
+        <div class="mb-4">
+          <label for="format" class="block text-white mb-2">Source Format</label>
+          <div class="relative">
+            <select v-model="settings.amenity" class="appearance-none cursor-pointer focus:outline-none block w-full px-2 py-2 rounded shadow text-lg">
+              <option value="gfm" selected>Github Markdown</option>
+              <option value="md">Markdown</option>
+              <option value="rst">reStructured Text</option>
+            </select>
+            <div class="pointer-events-none cursor-pointer absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label for="format" class="block text-white mb-2">Source Url</label>
+          <input type="text" x-model="input" placeholder="https://github.com/user/repo" class="w-full px-2 py-2 rounded shadow text-lg" />
+        </div>
+        <div class="mb-4 text-right">
+          <button type="button" @click="startConverter()" class="text-gray-900 bg-custom-400 rounded shadow px-3 py-2">Convert now</button>
+        </div>
+      </div>
+    </div>
+    <div id="output" class="container text-white"></div>
+  </div>
+</body>
+
+<script>
+  const socket = io.connect('http://localhost:5000');
+
+  socket.emit('loaded');
+
+  socket.on('my_response', function(data) {
+    let outputDiv = document.getElementById('output');
+    let contentDiv = document.createElement('div');
+    contentDiv.innerHTML = '<pre>' + data.data + '</pre>';
+
+    while (contentDiv.firstChild) {
+      outputDiv.appendChild(contentDiv.firstChild);
+    }
+  });
+
+  socket.on('done', function() {
+    const format = document.getElementById('format');
+    const input = document.getElementById('input');
+    const scheme = window.location.protocol;
+    const host = window.location.host;
+    const url = scheme + "//api." + host;
+
+    fetch(url + '/retrieve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          format: format,
+          input: input
+        })
+      })
+      .then(res => res.blob())
+      .then(data => {
+        download(data);
+      }).catch(err => {
+        console.error('error log message ', err);
+      });
+  });
+
+  function download(data) {
+    const file = new Blob([data], {
+      type: 'application/pdf'
+    });
+
+    // process to auto download it
+    const fileURL = URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = fileURL;
+    link.download = 'out.pdf';
+    link.click();
+    link.remove();
+  }
+
+  function bindForm() {
+    return {
+      input: null,
+      format: 'gfm',
+      startConverter() {
+        document.getElementById('output').innerHTML = '';
+        socket.emit('instance', this.format, this.input);
+      }
+    }
+  }
+</script>
+
+</html>
