@@ -12,7 +12,8 @@ eventlet.monkey_patch()
 
 app = Flask(__name__)
 app.config.from_json('config.json')
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins='*',
+                    manage_session=True, engineio_logger=True)
 
 
 @app.route('/')
