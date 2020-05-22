@@ -4,9 +4,10 @@ import pathlib
 import eventlet
 import subprocess
 
+from eventlet.green.subprocess import Popen
 from flask import Flask, send_from_directory, jsonify
 from flask_socketio import SocketIO, emit
-from eventlet.green.subprocess import Popen
+from flask_cors import CORS
 
 eventlet.monkey_patch()
 
@@ -14,6 +15,7 @@ app = Flask(__name__)
 app.config.from_json('config.json')
 socketio = SocketIO(app, cors_allowed_origins='*',
                     manage_session=True, engineio_logger=True)
+cors = CORS(app, resources={r'/retrieve/*': {'origins': '*'}})
 
 
 @app.route('/')
@@ -32,10 +34,12 @@ def convert_and_stream(type, url):
     cwd = pathlib.Path.cwd()
     target = '/home/latex/data/output'
     container = 'opendatacoder/markdown:latest'
+    executable = '/usr/bin/docker'
 
-    command = ['docker', 'run', '--rm', '-v', '{}:{}'.format(cwd, target),
-               '{}'.format(container), '--format', ''.format(type),
-               '--output', 'out', '--input', '{}'.format(url)]
+    command = ['{}'.format(executable), 'run', '--rm', '-v',
+               '{}:{}'.format(cwd, target), '{}'.format(container),
+               '--format', '{}'.format(type), '--output', 'out',
+               '--input', '{}'.format(url)]
 
     instance = Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
