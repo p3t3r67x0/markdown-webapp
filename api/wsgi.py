@@ -4,18 +4,48 @@ import pathlib
 import eventlet
 import subprocess
 
+from urllib.parse import urlparse
 from eventlet.green.subprocess import Popen
 from flask import Flask, send_from_directory, jsonify
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 
-eventlet.monkey_patch()
+requests = eventlet.import_patched('requests.__init__')
 
 app = Flask(__name__)
 app.config.from_json('config.json')
 socketio = SocketIO(app, cors_allowed_origins='*',
                     manage_session=True, engineio_logger=True)
 cors = CORS(app, resources={r'/retrieve/*': {'origins': '*'}})
+
+
+def parse_git_url(url):
+    parse = urlparse(url)
+
+    if parse.netloc != 'github.com':
+        return url
+
+    p = parse.path.split('/')
+    c = len(p)
+    j = c - 5
+
+    user = p[1]
+    repo = p[2]
+    path = '/'.join(p[c - j - c:])
+    base = 'https://api.github.com/repos/'
+
+    api_url = '{}{}/{}/contents/{}'.format(base, user, repo, path)
+
+    session = requests.Session()
+    session.auth = (app.config['GITHUB_USER'],
+                    app.config['GITHUB_PASSWORD'])
+    res = session.get(api_url)
+
+    if res.status_code == requests.codes.ok:
+        response = res.json()
+        return response['download_url']
+
+    return url
 
 
 @app.route('/')
@@ -55,9 +85,12 @@ def convert_and_stream(type, url):
 
 @socketio.on('instance')
 def tasks_threaded(format, url):
+    url = parse_git_url(url)
+
     socketio.start_background_task(convert_and_stream, format, url)
 
     emit('my_response', {'data': 'initiating process'})
+    emit('my_response', {'data': 'parsing {}'.format(url)})
 
 
 @socketio.on('loaded')

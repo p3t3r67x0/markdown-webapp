@@ -81,6 +81,7 @@
   const scheme = window.location.protocol;
   const host = window.location.host;
   const url = scheme + "//api." + host;
+  // const url = 'http://localhost:5000';
 
   const socket = io.connect(url);
 
@@ -143,6 +144,7 @@
       input: null,
       format: 'gfm',
       startConverter() {
+        document.querySelector('#output').innerHTML = '';
         socket.emit('instance', this.format, this.input);
       }
     }
