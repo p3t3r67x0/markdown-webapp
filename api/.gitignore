@@ -1,0 +1,10 @@
+*.aux
+*.log
+*.out
+*.pdf
+*.tex
+*.html
+__pycache__
+.pytest_cache
+config.json
+venv
