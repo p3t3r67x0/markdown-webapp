@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
+import uuid
 import pathlib
 import eventlet
 import subprocess
 
 from urllib.parse import urlparse
 from eventlet.green.subprocess import Popen
-from flask import Flask, send_from_directory, jsonify
+from flask import Flask, send_from_directory, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 
@@ -50,14 +51,15 @@ def parse_git_url(url):
 
 @app.route('/')
 def index():
-    return jsonify({'message': 'Thanks for visiting the api.reedo.me'}), 404
+    return jsonify({'message': 'Thanks for visiting api.reedo.me'}), 404
 
 
 @app.route('/retrieve', methods=['POST'])
 def retrieve_file():
     cwd = pathlib.Path.cwd()
+    req = request.get_json()
 
-    return send_from_directory(directory=cwd, filename='out.pdf')
+    return send_from_directory(directory=cwd, filename=req['file'])
 
 
 def convert_and_stream(type, url):
@@ -65,10 +67,11 @@ def convert_and_stream(type, url):
     target = '/home/latex/data/output'
     container = 'opendatacoder/markdown:latest'
     executable = '/usr/bin/docker'
+    output = str(uuid.uuid4()).split('-')[-1]
 
     command = ['{}'.format(executable), 'run', '--rm', '-v',
                '{}:{}'.format(cwd, target), '{}'.format(container),
-               '--format', '{}'.format(type), '--output', 'out',
+               '--format', '{}'.format(type), '--output', '{}'.format(output),
                '--input', '{}'.format(url)]
 
     instance = Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -80,7 +83,7 @@ def convert_and_stream(type, url):
         data = line.decode('utf8').rstrip('\n')
         socketio.emit('my_response', {'data': str(data)})
 
-    socketio.emit('done')
+    socketio.emit('done', {'file': '{}.pdf'.format(output)})
 
 
 @socketio.on('instance')

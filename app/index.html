@@ -194,7 +194,7 @@
     }
   });
 
-  socket.on('done', function() {
+  socket.on('done', function(data) {
     const format = document.querySelector('#format');
     const input = document.querySelector('#input');
 
@@ -204,15 +204,14 @@
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          format: format,
-          input: input
+          file: data.file
         })
       })
       .then(res => res.blob())
       .then(data => {
         download(data);
-      }).catch(err => {
-        console.error('error log message ', err);
+      }).catch(error => {
+        console.error('error message ', error);
       });
   });
 
