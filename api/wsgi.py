@@ -56,7 +56,7 @@ def parse_git_url(url):
 
     session = requests.Session()
     session.auth = (app.config['GITHUB_USER'],
-                    app.config['GITHUB_PASSWORD'])
+                    app.config['GITHUB_TOKEN'])
     res = session.get(api_url)
 
     if res.status_code == requests.codes.ok:

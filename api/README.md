@@ -10,7 +10,7 @@ Create a `config.json` file in the `/api` folder
 {
   "SECRET_KEY": "YOUR_SECRET_KEY_HERE",
   "GITHUB_USER": "YOUR_GITHUB_USERNAME_HERE",
-  "GITHUB_PASSWORD": "YOUR_GITHUB_PASSWORD_HERE"
+  "GITHUB_TOKEN": "YOUR_GITHUB_TOKEN_HERE"
 }
 ```
 
