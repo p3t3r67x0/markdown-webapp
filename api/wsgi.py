@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import re
 import uuid
 import pathlib
 import eventlet
@@ -11,13 +12,25 @@ from flask import Flask, send_from_directory, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 
-requests = eventlet.import_patched('requests.__init__')
+requests = eventlet.import_patched('requests')
 
 app = Flask(__name__)
 app.config.from_json('config.json')
-socketio = SocketIO(app, cors_allowed_origins='*',
-                    manage_session=True, engineio_logger=True)
+socketio = SocketIO(app, cors_allowed_origins='*', logger=True,
+                    engineio_logger=True, manage_session=True)
 cors = CORS(app, resources={r'/retrieve/*': {'origins': '*'}})
+
+
+def is_valid_url(url):
+    pattern = re.compile(
+        r'^https?://'
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'
+        r'localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
+        r'(?::\d+)?(?:/?|[/?]\S+)$', re.IGNORECASE)
+
+    match = re.search(pattern, url)
+
+    return match
 
 
 def parse_git_url(url):
@@ -29,10 +42,14 @@ def parse_git_url(url):
     p = parse.path.split('/')
     c = len(p)
     j = c - 5
+    k = c - j - c
+
+    if not c >= k:
+        return url
 
     user = p[1]
     repo = p[2]
-    path = '/'.join(p[c - j - c:])
+    path = '/'.join(p[k:])
     base = 'https://api.github.com/repos/'
 
     api_url = '{}{}/{}/contents/{}'.format(base, user, repo, path)
@@ -89,6 +106,11 @@ def convert_and_stream(type, url):
 @socketio.on('instance')
 def tasks_threaded(format, url):
     url = parse_git_url(url)
+
+    if not is_valid_url(url):
+        emit('my_response', {'data': 'yolo specify a valid source url'})
+
+        return None
 
     socketio.start_background_task(convert_and_stream, format, url)
 
