@@ -107,7 +107,7 @@ def convert_and_stream(type, url):
 def tasks_threaded(format, url):
     url = parse_git_url(url)
 
-    if not is_valid_url(url):
+    if not url or not is_valid_url(url):
         emit('my_response', {'data': 'yolo specify a valid source url'})
 
         return None
