@@ -5,8 +5,8 @@ import io from 'socket.io-client';
 
 const scheme = window.location.protocol;
 const host = window.location.host;
-// const url = scheme + "//api." + host;
-const url = 'https://api.reedo.me';
+const url = scheme + "//api." + host;
+// const url = 'https://api.reedo.me';
 
 const socket = io(url);
 
